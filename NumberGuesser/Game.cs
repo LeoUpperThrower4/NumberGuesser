@@ -7,13 +7,18 @@ namespace NumberGuesser
         // Create a random number
         public static int numberToGuess = new Random().Next(101);
         public static int counter = 0;
+        public static int difficulty = 0; // 0 - Easy; 1 - Hard
 
         static void Main(string[] args)
         {
             //Asks for user name
             var usersName = AskName();
+
             // Say hi
-            Console.WriteLine($"Welcome to the number guesser game, {usersName}");
+            Console.WriteLine($"Welcome to the number guesser game, {usersName}. You will have to guess a number between 0 and 100");
+
+            //Asks the user for the difficulty
+            difficulty = AskDifficulty();
 
             // Create a variable to store the guess
             var wasRightGuess = false;
@@ -26,6 +31,8 @@ namespace NumberGuesser
                 // Asks for the guess then check if it's the right one
                 wasRightGuess = CheckGuessedNumber(AskNumber());
             }
+            Console.Write("Press anything to exit");
+            Console.ReadLine();
         }
         /// <summary>
         /// Asks the user for an integer, the guess. 
@@ -55,16 +62,26 @@ namespace NumberGuesser
             // Checks wheter the guessed number was right or not
             if (number == numberToGuess)
             {
-                // Congrats and return true
-                Console.WriteLine("You are right!");
+                // Add to the counter, congrats the user and return true
                 counter++;
-                Console.WriteLine($"You took {counter} tries");
+                Console.WriteLine($"You are right!. You took {counter} tries");
                 return true;
             }
             else
             {
-                // Say is wrong and return false
-                Console.WriteLine("You are wrong!");
+                //creates a var to store the output message
+                var result = "You're wrong! ";
+                //check the difficult level and give an according answer
+                if (difficulty == 1)
+                {
+                    result += "Try again";
+                }
+                else
+                {
+                    result += (number > numberToGuess ? "it's lower" : "it's higher");
+                }
+                //Checks if the number is higher or lower and store a result string in a var saying it
+                Console.WriteLine(result);
                 counter++;
                 return false;
             }
@@ -79,6 +96,27 @@ namespace NumberGuesser
             Console.Write("Hey there, what's your name? ");
             var usersName = Console.ReadLine();
             return usersName;
+        }
+        /// <summary>
+        /// Asks the user for the difficulty. 0 - Easy; 1 - Hard;
+        /// </summary>
+        /// <returns>Int. Difficulty level</returns>
+        static int AskDifficulty()
+        {
+            // Asks for difficulty
+            Console.Write("What's your desired difficulty? 0 - Easy; 1 - Hard ");
+            // Try to parse the answer
+            var succeded = int.TryParse(Console.ReadLine(), out var difficultuLevel);
+            // Loop while don't get a valid level
+            while (!succeded)
+            {
+                Console.WriteLine("Not a valid answer.");
+                Console.WriteLine("What's your desired difficulty? 0 - Easy; 1 - Hard");
+                //Try to parse the new text
+                succeded = int.TryParse(Console.ReadLine(), out difficultuLevel);
+            }
+            // return the answer
+            return difficultuLevel;
         }
     }
 }
